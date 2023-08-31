@@ -1,0 +1,158 @@
+﻿@using Blog.Services.Interfaces
+@model Blog.Models.BlogPost
+@inject IImageService _ImageService
+@inject IBlogService _BlogService
+
+@{
+    ViewData["Title"] = "Create";
+}
+<style>
+    .ck-editor__editable_inline {
+        min-height: 600px;
+    }
+
+    input.largerCheckbox {
+        width: 30px;
+        height: 30px;
+    }
+
+    label.form-check-label {
+        font-size: 22px;
+    }
+</style>
+<div class="post-single-wrapper axil-section-gap bg-color-white">
+    <div class="container">
+        <h1>Edit</h1>
+        <h4>BlogPost</h4>
+    </div>
+    <hr />
+    <main class="container mt-5">
+        <div class="col-md-4">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Created" />
+                <input type="hidden" asp-for="Slug" />
+                <input type="hidden" asp-for="ImageFileData" />
+                <input type="hidden" asp-for="ImageFileType" />
+                <div class="row">
+                    <div class="col-12 col-lg-4">
+                        <div class="form-group">
+                            <label asp-for="ImageFormFile" class="control-label">Blog Post Image</label>
+                            <img class="img-fluid border rounded-3 mb-2" style="max-height: 350px;" src="@_ImageService.ConvertByteArrayToFile(Model?.ImageFileData!,Model?.ImageFileType!, DefaultImage.BlogPostImage)" id="blogImage">
+                            <input asp-for="ImageFormFile" type="file" class="form-control mt-3 pt-2" accept=".png,.jpg,.jpeg,.gif"
+                                   onchange="document.getElementById('blogImage').src = window.URL.createObjectURL(this.files[0])" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Title" class="control-label"></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Abstract" class="control-label"></label>
+                            <textarea asp-for="Abstract" class="form-control" rows="1"></textarea>
+                            <span asp-validation-for="Abstract" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CategoryId" class="control-label">Category</label>
+                            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-8">
+                        <div class="form-group">
+                            <label asp-for="Content" class="control-label"></label>
+                            <textarea asp-for="Content" class="editor form-control"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" id="tagContainer">
+                            <label asp-for="Tags"></label>
+                            <input class="form-control" type="text" id="tagInput" name="StringTags" autocomplete="off" />
+                            <div class="tagcloud axil-single-widget mt-2">
+                                <!-- tags go here -->
+                                @foreach (Tag tag in await _BlogService.GetTagsAsync())
+                                {
+                                    <a >@tag.Name</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group d-flex justify-content-end">
+                    <label class="form-check-label me-4 mt-2" asp-for="IsPublished">Publish?</label>
+                    <input class="largerCheckbox me-8" type="checkbox" asp-for="IsPublished" />
+                    <span asp-validation-for="IsPublished" class="text-danger"></span>
+                </div>
+                <div class="form-group d-flex justify-content-end">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+            <div class="form-group mt-5 start-0">
+                <a asp-action="Index">Back</a>
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <!--CK Editor-->
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('.editor'), {
+                licenseKey: '',
+            })
+            .then(editor => {
+                window.editor = editor;
+            });
+    </script>
+
+    <script>
+        jQuery.expr[':'].contains = function (a, i, m) {
+            return $(a).text().toUpperCase()
+                .indexOf(m[3].toUpperCase()) >= 0;
+        };
+
+        $(document).ready(function () {
+            //add an event listener on tag input to show tagcloud
+            $('#tagInput').focus(function () {
+                $('.tagcloud').show(300);
+            });
+            // add an event listener to hide tagcloud
+            $('form *:not("#tagInput")').focus(function () {
+                if ($('.tagcloud').is(':visible')) {
+                    $('.tagcloud').hide(300);
+                }
+            });
+
+            $('#tagInput').keyup(function () {
+                //Get just the text after last comma
+                let inputTags = $(this).val().split(',');
+                let searchString = inputTags.pop().trim();
+                //hide all the tags which do not contain that text
+                $('.tagcloud > a:not( :contains(' + searchString + ') )').hide();
+                //show all the tags which do contain that text
+                $('.tagcloud > a:contains(' + searchString + ')').show();
+            });
+
+        });
+        $('.tagcloud > a').click(function () {
+            //get name of the tag that was clicked
+            let tagName = $(this).text();
+            //get the text currently in the tag input and split it by commas
+            let tags = $('#tagInput').val().split(',');
+            //remove last elementi
+            tags.pop();
+            //add what name that was clicked
+            tags.push(tagName);
+            //change the text in the input
+            let tagsAsString = tags.map(t => t.trim()).join(', ') + ', ';
+            $('#tagInput').val(tagsAsString);
+
+            $('#tagInput').focus();
+            $('#tagInput').keyup();
+        })
+    </script>
+    }

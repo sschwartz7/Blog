@@ -1,0 +1,51 @@
+﻿@inject IImageService _ImageService
+
+
+<div class="axil-author-area axil-author-banner bg-color-grey">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="about-author">
+                    <div class="media">
+                        <div class="thumbnail">
+                            <a href="#">
+                                <img src="@_ImageService.ConvertByteArrayToFile(null, null, DefaultImage.AuthorImage)" alt="Author Images">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <div class="author-info">
+                                <h1 class="title"><a href="#">Simon Schwartz</a></h1>
+                                <span class="b3 subtitle">Web Developer</span>
+                            </div>
+                            <div class="content">
+                                <p class="b1 description">Once in a while you need to do something, anything TM</p>
+                                <ul class="social-share-transparent size-md">
+                                    <li>
+                                        <a class="text-decoration-none" href="https://www.linkedin.com/in/sbschwartz94/">
+                                            <i class="bi bi-linkedin p-2 socialIcons"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-decoration-none" href="https://github.com/sschwartz7">
+                                            <i class="bi bi-github p-2 socialIcons"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-decoration-none" href="https://mastodon.social/@@sschwartz">
+                                            <i class="bi bi-mastodon p-2 socialIcons"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-decoration-none" href="mailto:sschwartz794@gmail.com">
+                                            <i class="bi bi-envelope-at p-2 socialIcons"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

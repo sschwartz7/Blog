@@ -31,10 +31,8 @@ body {
     width: 40px;
     height: 40px;
     line-height: 40px;
-    background-color: #fff;
     text-align: center;
     text-decoration: none;
-    color: #252525;
     border-radius: 4px;
     margin: 5px;
     box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
@@ -42,7 +40,7 @@ body {
 }
 
 .my-page-item a.my-page-link:hover, a.my-page-link:active {
-    color: #fff;
+    color: var(--white);
     background-color: #bf4c41;
 }
 

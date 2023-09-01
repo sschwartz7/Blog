@@ -1,0 +1,109 @@
+﻿@using Blog.Services.Interfaces
+@model IPagedList<BlogPost>
+@inject IImageService _ImageService
+@inject IBlogService _BlogService
+
+@{
+    ViewData["Title"] = "AuthorArea";
+    string? actionName = ViewBag.ActionName;
+}
+
+<!-- Start Post List Wrapper  -->
+<div class="axil-post-list-area axil-section-gap bg-color-white">
+    <div class="container">
+        <a asp-action="Create" asp-controller="BlogPosts" class="axil-button button-rounded btn-primary mb-5">New Blog Post</a> @* link to create page *@
+        <!-- Start Post List  -->
+        @* BEGIN: show this for each post *@
+        @foreach (BlogPost blogPost in Model)
+        {
+            <div class="row my-3">
+                <div class="col-lg-8 col-xl-8">
+                    <div class="content-block post-list-view mt--30">
+                        <div class="post-thumbnail">
+                            <a asp-action="Edit" asp-controller="BlogPosts" asp-route-id="@blogPost.Id">
+                                @* link to post *@
+                                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageFileData, blogPost.ImageFileType, DefaultImage.BlogPostImage)" alt="Post Image"> @* post img *@
+                            </a>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-cat">
+                                <div class="post-cat-list">
+                                    <a class="hover-flip-item-wrapper" asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">
+                                        @* link to post *@
+                                        <span class="hover-flip-item">
+                                            <span data-text="@blogPost.Category?.Name">@blogPost.Category?.Name</span> @* post category *@
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                            <h4 class="title"><a asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">@blogPost.Title</a></h4>
+                            <div class="post-meta-wrapper">
+                                <div class="post-meta">
+                                    <div class="content">
+                                        <ul class="post-meta-list">
+                                            <li>@blogPost?.Created.ToLongDateString()</li>
+                                            <li>Comments: @blogPost?.Comments.Count()</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <ul class="social-share-transparent justify-content-end fw-bold">
+                                    @* BLOG STATUS: show just one of these! *@
+                                    @if (blogPost.IsPublished == true && blogPost.IsDeleted == false)
+                                    {
+                                        <li><a class="text-success">Published</a></li>
+                                    }
+                                    else if (blogPost.IsDeleted == true)
+                                    {
+                                        <li><a class="text-danger">Deleted</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="text-warning">Unpublished</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-xl-4">
+                    <div class="content-block post-list-view mt--30 h-100">
+                        <div class="post-content d-flex flex-column gap-3 align-items-center">
+                            @if (blogPost.IsPublished == true)
+                            {
+                                <a asp-action="PublishToggle" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-success">UnPublish</a>
+                            }
+                            else
+                            {
+                                <a asp-action="PublishToggle" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-success">Publish</a>
+                            }
+                            <a asp-action="Edit" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-warning">Edit</a>
+                            @if (blogPost.IsDeleted == true)
+                            {
+                                <a asp-action="DeleteToggle" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-danger">Undelete</a>
+                            }
+                            else
+                            {
+                                <a asp-action="DeleteToggle" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-danger">Delete</a>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @* END: show this for each post *@
+
+        @* paginated navigation *@
+        <div class="social-icon">
+            <div>
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of  @Model.PageCount
+            </div>
+            @Html.PagedListPager(Model, pageNum => Url.Action(actionName, new {pageNum}),
+            new PagedListRenderOptions { LiElementClasses = new string[] {"my-page-item"}
+            , PageClasses = new string[] {"my-page-link"}
+            })
+        </div>
+        <!-- End Post List  -->
+    </div>
+</div>
+<!-- End Post List Wrapper  -->

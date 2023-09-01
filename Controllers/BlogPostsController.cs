@@ -104,7 +104,17 @@ namespace Blog.Controllers
             return View(blogPost);
         }
 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AuthorArea(int? pageNum)
+        {
+            int pageSize = 3;
+            int page = pageNum ?? 1;
 
+            IPagedList<BlogPost> blogPosts = await (await _blogService.GetAllBlogPostsAsync()).ToPagedListAsync(page, pageSize);
+            ViewData["ActionName"] = nameof(AuthorArea);
+
+            return View(blogPosts);
+        }
         // GET: BlogPosts/Create
         [Authorize(Roles = "Admin,Author")]
         public IActionResult Create()
@@ -181,7 +191,7 @@ namespace Blog.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,Abstract,Created,Updated,Slug,IsPublished,IsDeleted,,ImageFormFile,ImageFileData,ImageFileType,CategoryId")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,Abstract,Created,Updated,Slug,IsPublished,IsDeleted,,ImageFormFile,ImageFileData,ImageFileType,CategoryId")] BlogPost blogPost, string? stringTags)
         {
             if (id != blogPost.Id)
             {
@@ -200,6 +210,11 @@ namespace Blog.Controllers
                         blogPost.ImageFileData = await _imageService.ConvertFileToByteArrayAsync(blogPost.ImageFormFile);
                         //Assign the imagetype based on chosen file
                         blogPost.ImageFileType = blogPost.ImageFormFile.ContentType;
+                    }
+                    if (string.IsNullOrEmpty(stringTags) == false)
+                    {
+                        IEnumerable<string> tags = stringTags.Split(',');
+                        await _blogService.AddTagsToBlogPostAsync(tags, blogPost.Id);
                     }
                     await _blogService.UpdateBlogPostAsync(blogPost);
                 }
@@ -220,50 +235,83 @@ namespace Blog.Controllers
             return View(blogPost);
         }
 
-        // GET: BlogPosts/Delete/5
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.BlogPosts == null)
-            {
-                return NotFound();
-            }
-
-            var blogPost = await _context.BlogPosts
-                .Include(b => b.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (blogPost == null)
-            {
-                return NotFound();
-            }
-
-            return View(blogPost);
-        }
-
+       
         // POST: BlogPosts/Delete/5
         [Authorize(Roles = "Admin")]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteToggle(int? id)
         {
-            if (_context.BlogPosts == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.BlogPosts'  is null.");
+            if (id == null || id == 0) return NotFound();
 
-            }
-            var blogPost = await _context.BlogPosts.FindAsync(id);
-            if (blogPost != null)
+            BlogPost? blogPost = await _blogService.GetBlogPostAsync(id);
+            if (blogPost == null) return NotFound();
+            if (blogPost.IsDeleted == false)
             {
-                await _blogService.DeleteBlogPostAsync(blogPost);
+                blogPost.IsDeleted = true;
             }
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                blogPost.IsDeleted = false;
+            }
+            await _blogService.UpdateBlogPostAsync(blogPost);
+            return RedirectToAction(nameof(AuthorArea));
         }
 
         private bool BlogPostExists(int id)
         {
             return (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> PublishToggle(int? id)
+        {
+            if (id == null || id == 0) return NotFound();
+
+            BlogPost? blogPost = await _blogService.GetBlogPostAsync(id);
+            if (blogPost == null) return NotFound(); 
+            if(blogPost.IsPublished == false)
+            {
+                blogPost.IsPublished = true;
+            }
+            else
+            {
+                blogPost.IsPublished = false;
+            }
+            await _blogService.UpdateBlogPostAsync(blogPost);
+            return RedirectToAction(nameof(AuthorArea));
+        }
+        [HttpPost]
+        public async Task<IActionResult> LikeBlogPost(int? blogPostId, string? blogUserId)
+        {
+            // check if user has already liked this blog.
+            // 1. get the user
+            BlogUser? blogUser = await _context.Users.Include(u => u.BlogLikes).FirstOrDefaultAsync(u => u.Id == blogUserId);
+            BlogPost? blogPost = await _context.BlogPosts.Include(u => u.Likes).FirstOrDefaultAsync(u => u.Id == blogPostId);
+            bool result = false;
+            BlogLike? blogLike = new();
+
+            if (blogUser != null && blogPostId != null)
+            {
+                // if not add a new BlogLike and set IsLiked = true
+                if (!blogUser.BlogLikes.Any(bl => bl.BlogPostId == blogPostId))
+                {
+                    blogLike.BlogUserId = blogUserId;
+                    blogLike.BlogUser = blogUser;
+                    blogLike.BlogPostId = blogPostId.Value;
+                    blogLike.BlogPost = blogPost;
+                    blogLike.IsLiked = true;
+                }else {
+                    // if a Like already exists on this BlogPost for this User,
+
+                    blogLike.IsLiked = false;
+                }
+                result = blogLike.IsLiked;
+                await _blogService.UpdateBlogPostAsync(blogPost);
+            }
+            return Json(new
+            {
+                isLiked = result,
+                count = _context.BlogLikes.Where(bl => bl.BlogPostId == blogPostId && bl.IsLiked == true).Count(),
+            });
+
         }
     }
 }

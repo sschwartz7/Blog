@@ -26,5 +26,7 @@ namespace Blog.Models
         public string? ImageFileType { get; set; }
         //Navigation Properties
         public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+
+        public virtual ICollection<BlogLike> BlogLikes { get; set; } = new HashSet<BlogLike>();
     }
 }

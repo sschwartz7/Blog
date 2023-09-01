@@ -136,13 +136,28 @@
                         return;
                     }
 
-                    let matchingTag = $('.tagcloud > a:contains(' + tag.trim() + ')');
-                    if (matchingTag.text().trim().toLowerCase() == tag.trim().toLowerCase()) {
-                        matchingTag.addClass('disabledTag');
-                    }
+                    let matchingTags = $('.tagcloud > a:contains(' + tag.trim() + ')');
+
+                    matchingTags.each(function () {
+                        if ($(this).text().trim().toLowerCase() == tag.trim().toLowerCase()) {
+                            $(this).addClass('disabledTag');
+                        }
+                    });
+
 
                 });
             });
+
+
+
+
+
+
+
+
+
+
+
 
         });
         $('.tagcloud > a').click(function () {

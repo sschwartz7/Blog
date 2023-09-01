@@ -94,8 +94,7 @@ namespace Blog.Services
             try
             {
                 BlogPost? blogPost = await _context.BlogPosts
-                    .Where(b => b.IsPublished == true && b.IsDeleted == false)
-                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Comments).ThenInclude(c => c.Author)
+                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Likes).Include(c => c.Comments).ThenInclude(c => c.Author)
                     .FirstOrDefaultAsync(c => c.Id == id);
                 return blogPost!;
             }
@@ -113,7 +112,7 @@ namespace Blog.Services
             {
                 BlogPost? blogPost = await _context.BlogPosts
                     .Where(b => b.IsPublished == true && b.IsDeleted == false)
-                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Comments).ThenInclude(c => c.Author)
+                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Likes).Include(c => c.Comments).ThenInclude(c => c.Author)
                     .FirstOrDefaultAsync(c => c.Slug == slug);
                 return blogPost!;
             }
@@ -161,7 +160,22 @@ namespace Blog.Services
             {
                 List<BlogPost> blogPosts = await _context.BlogPosts
                     .Where(b => b.IsPublished == true && b.IsDeleted == false)
-                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Comments).ThenInclude(c => c.Author).ToListAsync();
+                    .Include(b => b.Category).Include(v => v.Tags).Include(c=>c.Likes).Include(c => c.Comments).ThenInclude(c => c.Author).ToListAsync();
+                return blogPosts;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<BlogPost>> GetAllBlogPostsAsync()
+        {
+            try
+            {
+                List<BlogPost> blogPosts = await _context.BlogPosts
+                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Likes).Include(c => c.Comments).ThenInclude(c => c.Author).ToListAsync();
                 return blogPosts;
             }
             catch (Exception)
@@ -328,6 +342,19 @@ namespace Blog.Services
             {
                 _context.Update(blogPost);
                 await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> UserLikedBlogAsync(int? blogPostId, string blogUserId)
+        {
+            try
+            {
+                return await _context.BlogLikes.AnyAsync(bl => bl.BlogPostId == blogPostId && bl.BlogUserId == blogUserId);
             }
             catch (Exception)
             {

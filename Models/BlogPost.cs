@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
+using System.Text.Json.Serialization;
 
 namespace Blog.Models
 {
@@ -57,10 +58,17 @@ namespace Blog.Models
         public byte[]? ImageFileData { get; set; }
         public string? ImageFileType { get; set; }
         //Navigation Properties
+        [JsonIgnore]
         public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+        [JsonIgnore]
         public virtual ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
         public int CategoryId { get; set; }
+        [JsonIgnore]
         public virtual Category? Category { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<BlogLike> Likes { get; set; } = new HashSet<BlogLike>();
+
+
 
     }
 }

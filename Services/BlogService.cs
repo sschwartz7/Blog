@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Query;
 using Humanizer;
+using Azure;
 
 namespace Blog.Services
 {
@@ -122,14 +123,29 @@ namespace Blog.Services
                 throw;
             }
         }
+        public async Task<BlogPost> GetBlogPostPreviewAsync(string? slug)
+        {
+            if (string.IsNullOrEmpty(slug)) { return new BlogPost(); }
+            try
+            {
+                BlogPost? blogPost = await _context.BlogPosts
+                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Likes).Include(c => c.Comments).ThenInclude(c => c.Author)
+                    .FirstOrDefaultAsync(c => c.Slug == slug);
+                return blogPost!;
+            }
+            catch (Exception)
+            {
 
-        public IEnumerable<BlogPost> GetBlogPostByCategoryAsync(string? category)
+                throw;
+            }
+        }
+        public IEnumerable<BlogPost> GetBlogPostByTagAsync(string? tag)
         {
             try
             {
                 IEnumerable<BlogPost> blogPosts = new List<BlogPost>();
 
-                if (string.IsNullOrEmpty(category))
+                if (string.IsNullOrEmpty(tag))
                 {
                     return blogPosts;
                 }
@@ -137,9 +153,8 @@ namespace Blog.Services
                 {
                     
                     blogPosts = _context.BlogPosts.
-                         Include(b => b.Category).Include(v => v.Tags).Include(c => c.Comments).ThenInclude(c => c.Author).
+                         Include(b => b.Category).Include(v => v.Tags.Where(v => v.Name == tag)).Include(c => c.Comments).ThenInclude(c => c.Author).
                          Where(b => b.IsPublished == true && b.IsDeleted == false).
-                         Where(b => b.Category!.Name == category).
                          AsNoTracking().
                          OrderByDescending(b => b.Created).
                          AsEnumerable();
@@ -153,6 +168,7 @@ namespace Blog.Services
                 throw;
             }
         }
+
 
         public async Task<IEnumerable<BlogPost>> GetBlogPostsAsync()
         {
@@ -184,6 +200,38 @@ namespace Blog.Services
                 throw;
             }
         }
+        public async Task<IEnumerable<BlogPost>> GetDeletedBlogPostsAsync()
+        {
+            try
+            {
+                List<BlogPost> blogPosts = await _context.BlogPosts
+                    .Where(b => b.IsDeleted == true)
+                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Likes).Include(c => c.Comments).ThenInclude(c => c.Author).ToListAsync();
+                return blogPosts;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<BlogPost>> GetDraftBlogPostsAsync()
+        {
+            try
+            {
+                List<BlogPost> blogPosts = await _context.BlogPosts
+                    .Where(b => b.IsPublished == false && b.IsDeleted == false)
+                    .Include(b => b.Category).Include(v => v.Tags).Include(c => c.Likes).Include(c => c.Comments).ThenInclude(c => c.Author).ToListAsync();
+                return blogPosts;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
 
         public async Task<IEnumerable<Category>> GetCategoriesAsync()
         {
@@ -391,6 +439,35 @@ namespace Blog.Services
             }
         }
 
+        public IEnumerable<BlogPost> GetBlogPostByCategoryAsync(string? category)
+        {
+            try
+            {
+                IEnumerable<BlogPost> blogPosts = new List<BlogPost>();
 
+                if (string.IsNullOrEmpty(category))
+                {
+                    return blogPosts;
+                }
+                else
+                {
+
+                    blogPosts = _context.BlogPosts.
+                         Include(b => b.Category).Include(v => v.Tags).Include(c => c.Comments).ThenInclude(c => c.Author).
+                         Where(b => b.IsPublished == true && b.IsDeleted == false).
+                         Where(v => v.Category!.Name == category).
+                         AsNoTracking().
+                         OrderByDescending(b => b.Created).
+                         AsEnumerable();
+
+                    return blogPosts;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

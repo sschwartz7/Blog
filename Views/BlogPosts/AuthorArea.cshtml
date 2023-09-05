@@ -6,91 +6,49 @@
 @{
     ViewData["Title"] = "AuthorArea";
     string? actionName = ViewBag.ActionName;
+    string? actionTitle = ViewBag.ActionTitle;
 }
 
 <!-- Start Post List Wrapper  -->
 <div class="axil-post-list-area axil-section-gap bg-color-white">
     <div class="container">
-        <a asp-action="Create" asp-controller="BlogPosts" class="axil-button button-rounded btn-primary mb-5">New Blog Post</a> @* link to create page *@
+        <div class="m-2 row">
+            <div class="col dropdown-center">
+                <button class="btn btn-outline-success dropdown-toggle mb-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    @actionTitle
+                </button>
+                <ul class="dropdown-menu">
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="AuthorArea" asp-controller="BlogPosts" type="button" class="dropdown-item"><p style="color:black">Published Posts</p></a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="AuthorAreaDrafts" asp-controller="BlogPosts" type="button" class="dropdown-item"><p style="color:black">Drafts</p></a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="AuthorAreaDeleted" asp-controller="BlogPosts" type="button" class="dropdown-item"><p style="color:black">Deleted Posts</p></a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a asp-action="AuthorAreaAll" asp-controller="BlogPosts" type="button" class="dropdown-item"><p style="color:black">All Posts</p></a>
+                    </li>
+                </ul>
+            </div>
+            <div class=" col">
+                <a asp-action="Create" asp-controller="BlogPosts" class="btn btn-outline-success mb-5" type="button">New Blog Post</a> @* link to create page *@
+            </div>
+        </div>
+
+
+
+
         <!-- Start Post List  -->
         @* BEGIN: show this for each post *@
+
         @foreach (BlogPost blogPost in Model)
         {
-            <div class="row my-3">
-                <div class="col-lg-8 col-xl-8">
-                    <div class="content-block post-list-view mt--30">
-                        <div class="post-thumbnail">
-                            <a asp-action="Edit" asp-controller="BlogPosts" asp-route-id="@blogPost.Id">
-                                @* link to post *@
-                                <img src="@_ImageService.ConvertByteArrayToFile(blogPost.ImageFileData, blogPost.ImageFileType, DefaultImage.BlogPostImage)" alt="Post Image"> @* post img *@
-                            </a>
-                        </div>
-                        <div class="post-content">
-                            <div class="post-cat">
-                                <div class="post-cat-list">
-                                    <a class="hover-flip-item-wrapper" asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">
-                                        @* link to post *@
-                                        <span class="hover-flip-item">
-                                            <span data-text="@blogPost.Category?.Name">@blogPost.Category?.Name</span> @* post category *@
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                            <h4 class="title"><a asp-action="Details" asp-controller="BlogPosts" asp-route-slug="@blogPost.Slug">@blogPost.Title</a></h4>
-                            <div class="post-meta-wrapper">
-                                <div class="post-meta">
-                                    <div class="content">
-                                        <ul class="post-meta-list">
-                                            <li>@blogPost?.Created.ToLongDateString()</li>
-                                            <li>Comments: @blogPost?.Comments.Count()</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <ul class="social-share-transparent justify-content-end fw-bold">
-                                    @* BLOG STATUS: show just one of these! *@
-                                    @if (blogPost.IsPublished == true && blogPost.IsDeleted == false)
-                                    {
-                                        <li><a class="text-success">Published</a></li>
-                                    }
-                                    else if (blogPost.IsDeleted == true)
-                                    {
-                                        <li><a class="text-danger">Deleted</a></li>
-                                    }
-                                    else
-                                    {
-                                        <li><a class="text-warning">Unpublished</a></li>
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-xl-4">
-                    <div class="content-block post-list-view mt--30 h-100">
-                        <div class="post-content d-flex flex-column gap-3 align-items-center">
-                            @if (blogPost.IsPublished == true)
-                            {
-                                <a asp-action="PublishToggle" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-success">UnPublish</a>
-                            }
-                            else
-                            {
-                                <a asp-action="PublishToggle" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-success">Publish</a>
-                            }
-                            <a asp-action="Edit" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-warning">Edit</a>
-                            @if (blogPost.IsDeleted == true)
-                            {
-                                <a asp-action="DeleteToggle" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-danger">Undelete</a>
-                            }
-                            else
-                            {
-                                <a asp-action="DeleteToggle" asp-controller="BlogPosts" asp-route-id="@blogPost.Id" class="w-75 btn btn-outline-danger">Delete</a>
-                            }
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <partial name="_AuthorViewBlogCardPartial" model="blogPost" />
         }
+
+
         @* END: show this for each post *@
 
         @* paginated navigation *@
@@ -106,4 +64,5 @@
         <!-- End Post List  -->
     </div>
 </div>
+
 <!-- End Post List Wrapper  -->

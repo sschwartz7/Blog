@@ -106,7 +106,7 @@
                         @*Display Tags*@
                         @foreach (Tag tag in Model.Tags)
                         {
-                            <a href="#" class="badge rounded-pill border border-1 text-dark fw-normal">@tag.Name</a>
+                            <a asp-action="TagFilter" asp-controller="BlogPosts" asp-route-tag="@tag.Name" class="badge rounded-pill border border-1 text-dark fw-normal">@tag.Name</a>
                         }
                     </div>
                     <div class="social-share-block">

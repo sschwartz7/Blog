@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
 using X.PagedList;
 using Blog.Helper;
 using Blog.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Blog.Controllers
 {
@@ -54,8 +55,20 @@ namespace Blog.Controllers
 
             IPagedList<BlogPost> blogPosts = await _blogService.GetBlogPostByCategoryAsync(category).ToPagedListAsync(page, pageSize);
 
-            ViewData["ActionName"] = nameof(SearchIndex);
+            ViewData["ActionName"] = nameof(CategoryFilter);
             ViewData["SearchString"] = category;
+
+            return View(nameof(Index), blogPosts);
+        }
+        public async Task<IActionResult> TagFilter(string? tag, int? pageNum)
+        {
+            int pageSize = 3;
+            int page = pageNum ?? 1;
+
+            IPagedList<BlogPost> blogPosts = await _blogService.GetBlogPostByTagAsync(tag).ToPagedListAsync(page, pageSize);
+
+            ViewData["ActionName"] = nameof(TagFilter);
+            ViewData["SearchString"] = tag;
 
             return View(nameof(Index), blogPosts);
         }
@@ -81,7 +94,8 @@ namespace Blog.Controllers
 
             IPagedList<BlogPost> blogPosts = await (await _blogService.GetPopularBlogPostsAsync()).ToPagedListAsync(page, pageSize);
 
-            ViewData["ActionName"] = nameof(Index);
+            ViewData["ActionName"] = nameof(Popular);
+            ViewData["SearchString"] = "Popular";
 
             return View(nameof(Index), blogPosts);
         }
@@ -103,6 +117,22 @@ namespace Blog.Controllers
 
             return View(blogPost);
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Preview(string? slug)
+        {
+            if (string.IsNullOrEmpty(slug))
+            {
+                return NotFound();
+            }
+            BlogPost? blogPost = await _blogService.GetBlogPostPreviewAsync(slug);
+            Comment comment = new Comment();
+            if (blogPost == null)
+            {
+                return NotFound();
+            }
+
+            return View(nameof(Details), blogPost);
+        }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AuthorArea(int? pageNum)
@@ -110,10 +140,47 @@ namespace Blog.Controllers
             int pageSize = 3;
             int page = pageNum ?? 1;
 
-            IPagedList<BlogPost> blogPosts = await (await _blogService.GetAllBlogPostsAsync()).ToPagedListAsync(page, pageSize);
+            IPagedList<BlogPost> blogPosts = await (await _blogService.GetBlogPostsAsync()).ToPagedListAsync(page, pageSize);
             ViewData["ActionName"] = nameof(AuthorArea);
+            ViewData["actionTitle"] = "Published Posts";
 
             return View(blogPosts);
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AuthorAreaDrafts(int? pageNum)
+        {
+            int pageSize = 3;
+            int page = pageNum ?? 1;
+
+            IPagedList<BlogPost> blogPosts = await (await _blogService.GetDraftBlogPostsAsync()).ToPagedListAsync(page, pageSize);
+            ViewData["ActionName"] = nameof(AuthorAreaDrafts);
+            ViewData["actionTitle"] = "Drafts";
+
+            return View(nameof(AuthorArea), blogPosts);
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AuthorAreaDeleted(int? pageNum)
+        {
+            int pageSize = 3;
+            int page = pageNum ?? 1;
+
+            IPagedList<BlogPost> blogPosts = await (await _blogService.GetDeletedBlogPostsAsync()).ToPagedListAsync(page, pageSize);
+            ViewData["ActionName"] = nameof(AuthorAreaDeleted);
+            ViewData["actionTitle"] = "Deleted Posts";
+
+            return View(nameof(AuthorArea), blogPosts);
+        }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AuthorAreaAll(int? pageNum)
+        {
+            int pageSize = 3;
+            int page = pageNum ?? 1;
+
+            IPagedList<BlogPost> blogPosts = await (await _blogService.GetAllBlogPostsAsync()).ToPagedListAsync(page, pageSize);
+            ViewData["ActionName"] = nameof(AuthorAreaAll);
+            ViewData["actionTitle"] = "All Posts";
+
+            return View(nameof(AuthorArea), blogPosts);
         }
         // GET: BlogPosts/Create
         [Authorize(Roles = "Admin,Author")]
@@ -284,12 +351,13 @@ namespace Blog.Controllers
             // check if user has already liked this blog.
             // 1. get the user
             BlogUser? blogUser = await _context.Users.Include(u => u.BlogLikes).FirstOrDefaultAsync(u => u.Id == blogUserId);
-            BlogPost? blogPost = await _context.BlogPosts.Include(u => u.Likes).FirstOrDefaultAsync(u => u.Id == blogPostId);
             bool result = false;
             BlogLike? blogLike = new();
 
             if (blogUser != null && blogPostId != null)
-            {
+            {          
+             BlogPost? blogPost = await _context.BlogPosts.Include(u => u.Likes).FirstOrDefaultAsync(u => u.Id == blogPostId);
+                if (blogPost == null) return NotFound();
                 // if not add a new BlogLike and set IsLiked = true
                 if (!blogUser.BlogLikes.Any(bl => bl.BlogPostId == blogPostId))
                 {
@@ -298,12 +366,23 @@ namespace Blog.Controllers
                     blogLike.BlogPostId = blogPostId.Value;
                     blogLike.BlogPost = blogPost;
                     blogLike.IsLiked = true;
+                    await _context.BlogLikes.AddAsync(blogLike);
                 }else {
                     // if a Like already exists on this BlogPost for this User,
-
+                    blogLike = await _context.BlogLikes.FirstOrDefaultAsync(u => u.BlogUserId == blogUserId && u.BlogPostId == blogPostId);
+                    if(blogLike.IsLiked == true)
+                    {
                     blogLike.IsLiked = false;
+                    }
+                    else
+                    {
+                        blogLike.IsLiked = true;
+                    }
+
+                    _context.BlogLikes.Update(blogLike);
                 }
                 result = blogLike.IsLiked;
+                
                 await _blogService.UpdateBlogPostAsync(blogPost);
             }
             return Json(new
@@ -312,6 +391,21 @@ namespace Blog.Controllers
                 count = _context.BlogLikes.Where(bl => bl.BlogPostId == blogPostId && bl.IsLiked == true).Count(),
             });
 
+        }
+        [Authorize]
+        public async Task<IActionResult> FavoriteBlogs(int? pageNum)
+        {
+            int pageSize = 3;
+            int page = pageNum ?? 1;
+            string blogUserId = _userManager.GetUserId(User)!; 
+            BlogUser? blogUser = await _context.Users.Include(u => u.BlogLikes).ThenInclude(bl => bl.BlogPost).FirstOrDefaultAsync(u => u.Id == blogUserId);
+
+            IPagedList<BlogPost> blogPosts = blogUser!.BlogLikes!.Select(bl => bl.BlogPost!).ToPagedList(page, pageSize);
+
+            ViewData["ActionName"] = nameof(FavoriteBlogs);
+            ViewData["SearchString"] = "Favorites";
+
+            return View(nameof(Index), blogPosts);
         }
     }
 }

@@ -67,8 +67,5 @@ namespace Blog.Models
         public virtual Category? Category { get; set; }
         [JsonIgnore]
         public virtual ICollection<BlogLike> Likes { get; set; } = new HashSet<BlogLike>();
-
-
-
     }
 }

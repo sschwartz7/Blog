@@ -5,6 +5,34 @@
     ViewData["Title"] = "Index";
     string? searchString = ViewBag.SearchString;
     string? actionName = ViewBag.ActionName;
+    string? category = ViewBag.CategoryString;
+    string? tag = ViewBag.tagString;
+
+    string pageTitle = "";
+
+    switch (actionName){
+        case "Index":
+            pageTitle = "My Blogs";
+            break;
+        case "SearchIndex":
+            pageTitle = $"Search for '{searchString}'";
+            break;
+        case "CategoryFilter":
+            pageTitle = $"Category: '{searchString}'";
+            break;
+        case "TagFilter":
+            pageTitle = $"Tag: '{searchString}'";
+            break;
+        case "Popular":
+            pageTitle = "Pop-u-lar";
+            break;
+        case "FavoriteBlogs":
+            pageTitle = "All Your Favs";
+            break;
+
+           
+    }
+
 }
 
 <!-- Start Author Area  -->
@@ -29,7 +57,7 @@
                     <div >
                         Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of  @Model.PageCount
                     </div>
-                    @Html.PagedListPager(Model, pageNum => Url.Action(actionName, new {pageNum, searchString}), 
+                    @Html.PagedListPager(Model, pageNum => Url.Action(actionName, new {pageNum, searchString, category, tag}), 
                     new PagedListRenderOptions { LiElementClasses = new string[] {"my-page-item"}
                     , PageClasses = new string[] {"my-page-link"}
                 })

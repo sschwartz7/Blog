@@ -139,7 +139,7 @@ namespace Blog.Services
                 throw;
             }
         }
-        public IEnumerable<BlogPost> GetBlogPostByTagAsync(string? tag)
+        public async Task<IEnumerable<BlogPost>> GetBlogPostByTagAsync(string? tag)
         {
             try
             {
@@ -151,13 +151,17 @@ namespace Blog.Services
                 }
                 else
                 {
-                    
-                    blogPosts = _context.BlogPosts.
-                         Include(b => b.Category).Include(v => v.Tags.Where(v => v.Name == tag)).Include(c => c.Comments).ThenInclude(c => c.Author).
-                         Where(b => b.IsPublished == true && b.IsDeleted == false).
-                         AsNoTracking().
-                         OrderByDescending(b => b.Created).
-                         AsEnumerable();
+
+                    blogPosts = await _context.BlogPosts
+                      .Include(b => b.Category)
+                      .Include(b => b.Tags)
+                      .Include(b => b.Comments)
+                          .ThenInclude(c => c.Author)
+                    .Where(b => b.Tags.Any(t => t.Name == tag))
+                      .Where(b => b.IsPublished == true && b.IsDeleted == false)
+                      .AsNoTracking()
+                      .OrderByDescending(b => b.Created)
+                      .ToListAsync();
 
                     return blogPosts;
                 }
@@ -469,5 +473,6 @@ namespace Blog.Services
                 throw;
             }
         }
+
     }
 }

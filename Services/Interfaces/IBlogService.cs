@@ -24,7 +24,7 @@ namespace Blog.Services.Interfaces
         public IEnumerable<BlogPost> SearchBlogPosts(string? searchString);
         public Task<bool> ValidSlugAsync(string? title, int? blogPostId);
         public IEnumerable<BlogPost> GetBlogPostByCategoryAsync(string? category);
-        public IEnumerable<BlogPost> GetBlogPostByTagAsync(string? tag);
+        public Task<IEnumerable<BlogPost>> GetBlogPostByTagAsync(string? tag);
         public Task<bool> UserLikedBlogAsync(int? blogPostId, string blogUserId);
         public Task<BlogPost> GetBlogPostPreviewAsync(string? slug);
     }

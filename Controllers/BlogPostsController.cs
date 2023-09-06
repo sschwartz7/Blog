@@ -56,7 +56,7 @@ namespace Blog.Controllers
             IPagedList<BlogPost> blogPosts = await _blogService.GetBlogPostByCategoryAsync(category).ToPagedListAsync(page, pageSize);
 
             ViewData["ActionName"] = nameof(CategoryFilter);
-            ViewData["SearchString"] = category;
+            ViewData["CategoryString"] = category;
 
             return View(nameof(Index), blogPosts);
         }
@@ -68,7 +68,7 @@ namespace Blog.Controllers
             IPagedList<BlogPost> blogPosts = await _blogService.GetBlogPostByTagAsync(tag).ToPagedListAsync(page, pageSize);
 
             ViewData["ActionName"] = nameof(TagFilter);
-            ViewData["SearchString"] = tag;
+            ViewData["TagString"] = tag;
 
             return View(nameof(Index), blogPosts);
         }

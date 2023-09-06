@@ -68,14 +68,17 @@
                                         <a class="hover-flip-item-wrapper" asp-action="Popular" asp-controller="BlogPosts">Popular Posts</a>
                                     </li>
                                     @* <li class="menu-item-has-children"> *@
+                                    @if (User.Identity!.IsAuthenticated)
+                                    {
+                                        <li>
+                                            <a class="hover-flip-item-wrapper" asp-action="FavoriteBlogs" asp-controller="BlogPosts">
+                                                <span class="">
+                                                    <span data-text="Favorites">Favorites</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    }
 
-                                    <li>
-                                        <a class="hover-flip-item-wrapper" asp-action="FavoriteBlogs" asp-controller="BlogPosts">
-                                            <span class="">
-                                                <span data-text="Favorite">Favorite</span>
-                                            </span>
-                                        </a>
-                                    </li>
                                     <li><a asp-action="ContactMe" asp-controller="Home">Contact Me</a></li>
 
                                     @if (User.IsInRole("Admin"))
@@ -168,6 +171,9 @@
                                     }
                                     else
                                     {
+                                        <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                        </a>
                                         <div class="dropdown-menu animate__slideInDown">
                                             <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login"><p style="color:black">Sign In</p></a>
                                             <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register"><p style="color:black">Register</p></a>

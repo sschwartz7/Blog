@@ -65,7 +65,7 @@ namespace Blog.Controllers
             int pageSize = 3;
             int page = pageNum ?? 1;
 
-            IPagedList<BlogPost> blogPosts = await _blogService.GetBlogPostByTagAsync(tag).ToPagedListAsync(page, pageSize);
+            IPagedList<BlogPost> blogPosts = await(await _blogService.GetBlogPostByTagAsync(tag)).ToPagedListAsync(page, pageSize);
 
             ViewData["ActionName"] = nameof(TagFilter);
             ViewData["TagString"] = tag;

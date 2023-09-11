@@ -8,7 +8,7 @@ namespace Blog.Services
         private readonly string? _defaultBlogImage = "/img/DefaultBlogImage.svg";
         private readonly string? _defaultUserImage = "/img/DefaultBlogUserImage.png";
         private readonly string? _defaultCategoryImage = "/img/DefaultCategoryImage.png";
-        private readonly string? _blogAuthorImage = "/img/SharkSillouette.png";
+        private readonly string? _blogAuthorImage = "/img/undraw_programing_re_kg9v.svg";
         public string? ConvertByteArrayToFile(byte[]? fileData, string? extension, DefaultImage defaultImage)
         {
             try

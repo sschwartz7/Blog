@@ -26,6 +26,11 @@ body {
     list-style: none;
 }
 
+.author_image {
+    height: 150px;
+    width: 150px;
+}
+
 .my-page-link {
     display: block;
     width: 40px;

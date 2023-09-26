@@ -48,6 +48,8 @@ builder.Services.AddCors(cors =>
 builder.Services.AddScoped<IImageService, ImageService>();                   
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IEmailSender, EmailService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 //bind the email settings to the EmailSettings object

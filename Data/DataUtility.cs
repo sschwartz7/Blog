@@ -10,7 +10,7 @@ namespace Blog.Data
     {
         private const string? _adminRole = "Admin";
         private const string? _moderatorRole = "Moderator";
-        //private const string? _writerRole = "Writer";
+        private const string? _writerRole = "Writer";
         public static string GetConnectionString(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -63,10 +63,10 @@ namespace Blog.Data
             {
                 await roleManager.CreateAsync(new IdentityRole(_moderatorRole!));
             }
-            //if (!await roleManager.RoleExistsAsync(_writerRole!))
-            //{
-            //    await roleManager.CreateAsync(new IdentityRole(_writerRole!));
-            //}
+            if (!await roleManager.RoleExistsAsync(_writerRole!))
+            {
+                await roleManager.CreateAsync(new IdentityRole(_writerRole!));
+            }
 
         }
         private static async Task SeedBlogUsersAsync(UserManager<BlogUser> userManager, IConfiguration configuration)
@@ -76,6 +76,9 @@ namespace Blog.Data
 
             string? moderatorLoginEmail = configuration["ModeratorLoginEmail"] ?? Environment.GetEnvironmentVariable("ModeratorLoginEmail");
             string? moderatorPassword = configuration["ModeratorPwd"] ?? Environment.GetEnvironmentVariable("ModeratorPwd");
+
+            string? writerLoginEmail = configuration["WriterLoginEmail"] ?? Environment.GetEnvironmentVariable("WriterLoginEmail");
+            string? writerPassword = configuration["WriterPwd"] ?? Environment.GetEnvironmentVariable("WriterPwd");
 
             try
             {
@@ -114,6 +117,24 @@ namespace Blog.Data
                     await userManager.AddToRoleAsync(moderatorUser!, _moderatorRole!);
                 }
 
+                //Seed the Writer
+                BlogUser? writerUser = new BlogUser()
+                {
+                    UserName = writerLoginEmail,
+                    Email = writerLoginEmail,
+                    FirstName = "Antonio",
+                    LastName = "Raynor",
+                    EmailConfirmed = true
+                };
+
+                blogUser = await userManager.FindByEmailAsync(writerLoginEmail!);
+
+                if (blogUser == null)
+                {
+                    await userManager.CreateAsync(writerUser, writerPassword!);
+                    await userManager.AddToRoleAsync(writerUser!, _writerRole!);
+                }
+
             }
             catch (Exception ex)
             {
@@ -123,32 +144,7 @@ namespace Blog.Data
                 Console.WriteLine("***********************************");
                 throw;
             }
-            //try
-            //{
-            //    //Seed the Writer
-            //    BlogUser? writerUser = new BlogUser()
-            //    {
-            //        UserName = writerLoginEmail,
-            //        Email = writerLoginEmail,
-            //        FirstName = "Antonio",
-            //        LastName = "Raynor",
-            //        EmailConfirmed = true
-            //    };
 
-            //    blogUser = await userManager.FindByEmailAsync(writerLoginEmail!);
-
-            //    if (blogUser == null)
-            //    {
-            //        await userManager.CreateAsync(writerUser, writerPassword!);
-            //        await userManager.AddToRoleAsync(writerUser!, _writerRole!);
-            //    }
-
-            //}
-            //catch (Exception)
-            //{
-
-            //    throw;
-            //}
         }
 
     }

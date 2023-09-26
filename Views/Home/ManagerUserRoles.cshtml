@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ManagerUserRolesVM>
+<div class="main-content pt-5">
+    <div class="main-container container-fluid">
+        <div class="inner-body row row-cols-1 row-cols-md-2">
+            <h2 class="h3 col pt-3"><b>Manage Member Roles </b></h2>
+            <div class="col">
+                @foreach (var viewModel in Model)
+                {
+                    <div class="card custom-card">
+                        <div class="card-header custom-card-header border-bottom-0">
+                            <h5 class="main-content-label tx-dark tx-medium mb-0">@viewModel.BlogUser!.FullName</h5>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="ManageUserRoles" asp-controller="Companies" method=post>
+                                <input type="hidden" asp-for="@viewModel.BlogUser.Id" />
+                                <h6 class="">Role</h6>
+                                <select asp-for="@viewModel.SelectedRoles" class="form-control" asp-items="@viewModel.Roles">
+                                </select>
+                                <div class="form-group p-2">
+                                    <input type="submit" value="Assign Role" class="btn btn-info" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

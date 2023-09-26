@@ -117,7 +117,7 @@ namespace Blog.Controllers
 
             return View(blogPost);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         public async Task<IActionResult> Preview(string? slug)
         {
             if (string.IsNullOrEmpty(slug))
@@ -134,7 +134,7 @@ namespace Blog.Controllers
             return View(nameof(Details), blogPost);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         public async Task<IActionResult> AuthorArea(int? pageNum)
         {
             int pageSize = 3;
@@ -146,7 +146,7 @@ namespace Blog.Controllers
 
             return View(blogPosts);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         public async Task<IActionResult> AuthorAreaDrafts(int? pageNum)
         {
             int pageSize = 3;
@@ -158,7 +158,7 @@ namespace Blog.Controllers
 
             return View(nameof(AuthorArea), blogPosts);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         public async Task<IActionResult> AuthorAreaDeleted(int? pageNum)
         {
             int pageSize = 3;
@@ -170,7 +170,7 @@ namespace Blog.Controllers
 
             return View(nameof(AuthorArea), blogPosts);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         public async Task<IActionResult> AuthorAreaAll(int? pageNum)
         {
             int pageSize = 3;
@@ -183,7 +183,7 @@ namespace Blog.Controllers
             return View(nameof(AuthorArea), blogPosts);
         }
         // GET: BlogPosts/Create
-        [Authorize(Roles = "Admin,Author")]
+        [Authorize(Roles = "Admin,Writer")]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
@@ -193,7 +193,7 @@ namespace Blog.Controllers
         // POST: BlogPosts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Admin,Author")]
+        [Authorize(Roles = "Admin,Writer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Title,Content,Abstract,IsPublished,CategoryId, ImageFormFile")] BlogPost blogPost, string? stringTags)
@@ -235,7 +235,7 @@ namespace Blog.Controllers
         }
 
         // GET: BlogPosts/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.BlogPosts == null)
@@ -255,7 +255,7 @@ namespace Blog.Controllers
         // POST: BlogPosts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,Abstract,Created,Updated,Slug,IsPublished,IsDeleted,,ImageFormFile,ImageFileData,ImageFileType,CategoryId")] BlogPost blogPost, string? stringTags)
@@ -304,7 +304,7 @@ namespace Blog.Controllers
 
        
         // POST: BlogPosts/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         public async Task<IActionResult> DeleteToggle(int? id)
         {
             if (id == null || id == 0) return NotFound();
@@ -327,7 +327,7 @@ namespace Blog.Controllers
         {
             return (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Writer")]
         public async Task<IActionResult> PublishToggle(int? id)
         {
             if (id == null || id == 0) return NotFound();
@@ -345,6 +345,7 @@ namespace Blog.Controllers
             await _blogService.UpdateBlogPostAsync(blogPost);
             return RedirectToAction(nameof(AuthorArea));
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> LikeBlogPost(int? blogPostId, string? blogUserId)
         {

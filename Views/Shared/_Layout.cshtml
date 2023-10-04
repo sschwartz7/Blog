@@ -81,7 +81,7 @@
 
                                     <li><a asp-action="ContactMe" asp-controller="Home">Contact Me</a></li>
 
-                                    @if (User.IsInRole("Admin")||User.IsInRole("Writer"))
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Writer"))
                                     {
                                         <li class="menu-item-has-children">
                                             <a href="#">Author</a>
@@ -103,302 +103,303 @@
                                                         </a>
                                                     </li>
                                                 }
-                                                    <li>
-                                                        <a class="hover-flip-item-wrapper" href="~/swagger">
-                                                            <span class="">
-                                                                <span>APIs</span>
-                                                            </span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="Create">
-                                                            <span class="">
-                                                                <span>Add New Post</span>
-                                                            </span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="AuthorArea">
-                                                            <span class="hover-flip-item">
-                                                                <span data-text="Manage Posts">Manage Posts</span>
-                                                            </span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="hover-flip-item-wrapper" asp-controller="Categories" asp-action="Index">
-                                                            <span class="hover-flip-item">
-                                                                <span data-text="Manage Categories">Manage Categories</span>
-                                                            </span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="hover-flip-item-wrapper" asp-controller="Tags" asp-action="Index">
-                                                            <span class="hover-flip-item">
-                                                                <span data-text="Manage Tags">Manage Tags</span>
-                                                            </span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                                }
-                                    </ul>
-                                    <!-- End Mainmanu Nav -->
-                                </nav>
-                            </div>
+                                                <li>
+                                                    <a class="hover-flip-item-wrapper" href="~/swagger">
+                                                        <span class="">
+                                                            <span>APIs</span>
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="Create">
+                                                        <span class="">
+                                                            <span>Add New Post</span>
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="AuthorArea">
+                                                        <span class="hover-flip-item">
+                                                            <span data-text="Manage Posts">Manage Posts</span>
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="hover-flip-item-wrapper" asp-controller="Categories" asp-action="Index">
+                                                        <span class="hover-flip-item">
+                                                            <span data-text="Manage Categories">Manage Categories</span>
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="hover-flip-item-wrapper" asp-controller="Tags" asp-action="Index">
+                                                        <span class="hover-flip-item">
+                                                            <span data-text="Manage Tags">Manage Tags</span>
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+                                </ul>
+                                <!-- End Mainmanu Nav -->
+                            </nav>
                         </div>
-                        <div class="col-xl-3 col-lg-8 col-md-8 col-sm-9 col-12">
-                            <div class="header-search text-end d-flex align-items-center">
-                                <form asp-action="SearchIndex" asp-controller="BlogPosts" class="header-search-form d-sm-block d-none">
+                    </div>
+                    <div class="col-xl-3 col-lg-8 col-md-8 col-sm-9 col-12">
+                        <div class="header-search text-end d-flex align-items-center">
+                            <form asp-action="SearchIndex" asp-controller="BlogPosts" class="header-search-form d-sm-block d-none">
+                                <div class="axil-search form-group">
+                                    <button type="submit" class="search-button"><i class="fal fa-search"></i></button>
+                                    <input type="text" class="form-control" placeholder="Search" name="searchString">
+                                </div>
+                            </form>
+                            <div class="mobile-search-wrapper d-sm-none d-block">
+                                <button class="search-button-toggle"><i class="fal fa-search"></i></button>
+                                <form asp-action="SearchIndex" asp-controller="BlogPosts" class="header-search-form">
                                     <div class="axil-search form-group">
                                         <button type="submit" class="search-button"><i class="fal fa-search"></i></button>
                                         <input type="text" class="form-control" placeholder="Search" name="searchString">
                                     </div>
                                 </form>
-                                <div class="mobile-search-wrapper d-sm-none d-block">
-                                    <button class="search-button-toggle"><i class="fal fa-search"></i></button>
-                                    <form asp-action="SearchIndex" asp-controller="BlogPosts" class="header-search-form">
-                                        <div class="axil-search form-group">
-                                            <button type="submit" class="search-button"><i class="fal fa-search"></i></button>
-                                            <input type="text" class="form-control" placeholder="Search" name="searchString">
-                                        </div>
-                                    </form>
-                                </div>
-                                <ul class="metabar-block">
-                                    <li class="nav-item dropdown has-arrow main-drop">
-                                                        @if (User.Identity!.IsAuthenticated)
-                                                        {
-                                            <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <span class="user-img">
-                                                    <img src="@_ImageService.ConvertByteArrayToFile(blogUser.ImageFileData, blogUser.ImageFileType, DefaultImage.BlogUserImage)" alt="UserImage">
-                                                    <span class="status online"></span>
-                                                </span>
-                                                <span>@blogUser?.FullName</span>
-                                            </a>
-                                            <div class="dropdown-menu animate__slideInDown">
-                                                <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index"><p style="color:black">My Profile</p></a>
-                                                <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit();"><p style="color:black">Logout</p></a>
-                                            </div>
-                                                        }
-                                                        else
-                                                        {
-                                            <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false">
-
-                                            </a>
-                                            <div class="dropdown-menu animate__slideInDown">
-                                                <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login"><p style="color:black">Sign In</p></a>
-                                                <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register"><p style="color:black">Register</p></a>
-                                            </div>
-                                                        }
-                                    </li>
-                                </ul>
-                                <!-- Start Hamburger Menu -->
-                                <div class="hamburger-menu d-block d-xl-none">
-                                    <div class="hamburger-inner">
-                                        <div class="icon"><i class="fal fa-bars"></i></div>
-                                    </div>
-                                </div>
-                                <!-- End Hamburger Menu -->
                             </div>
+                            <ul class="metabar-block">
+                                <li class="nav-item dropdown has-arrow main-drop">
+                                    @if (User.Identity!.IsAuthenticated)
+                                    {
+                                        <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="user-img">
+                                                <img src="@_ImageService.ConvertByteArrayToFile(blogUser.ImageFileData, blogUser.ImageFileType, DefaultImage.BlogUserImage)" alt="UserImage">
+                                                <span class="status online"></span>
+                                            </span>
+                                            <span>@blogUser?.FullName</span>
+                                        </a>
+                                        <div class="dropdown-menu animate__slideInDown">
+                                            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index"><p style="color:black">My Profile</p></a>
+                                            <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit();"><p style="color:black">Logout</p></a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-box-arrow-in-right"></i>
+
+                                        </a>
+                                        <div class="dropdown-menu animate__slideInDown">
+                                            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login"><p style="color:black">Sign In</p></a>
+                                            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register"><p style="color:black">Register</p></a>
+                                        </div>
+                                    }
+                                </li>
+                            </ul>
+                            <!-- Start Hamburger Menu -->
+                            <div class="hamburger-menu d-block d-xl-none">
+                                <div class="hamburger-inner">
+                                    <div class="icon"><i class="fal fa-bars"></i></div>
+                                </div>
+                            </div>
+                            <!-- End Hamburger Menu -->
                         </div>
                     </div>
                 </div>
-            </header>
-            <!-- Start Header -->
-            <!-- Start Mobile Menu Area -->
-            <div class="popup-mobilemenu-area">
-                <div class="inner">
-                    <div class="mobile-menu-top">
-                        <div class="logo">
-                            <a href="index.html">
-                                <img class="dark-logo" src="~/assets/images/logo/MSTB-Light.png" alt="Logo Images">
-                                <img class="light-logo" src="~/assiets/images/logo/MSTB-Dark.png" alt="Logo Images">
+            </div>
+        </header>
+        <!-- Start Header -->
+        <!-- Start Mobile Menu Area -->
+        <div class="popup-mobilemenu-area">
+            <div class="inner">
+                <div class="mobile-menu-top">
+                    <div class="logo">
+                        <a href="index.html">
+                            <img class="dark-logo" src="~/assets/images/logo/MSTB-Light.png" alt="Logo Images">
+                            <img class="light-logo" src="~/assiets/images/logo/MSTB-Dark.png" alt="Logo Images">
+                        </a>
+                    </div>
+                    <div class="mobile-close">
+                        <div class="icon">
+                            <i class="fal fa-times"></i>
+                        </div>
+                    </div>
+                </div>
+                <ul class="mainmenu">
+                    <li>
+                        <a asp-controller="BlogPosts" asp-action="Index">Home</a>
+                    </li>
+                    <li>
+                        <a class="hover-flip-item-wrapper" asp-action="Popular" asp-controller="BlogPosts">Popular Posts</a>
+                    <li><a asp-action="ContactMe" asp-controller="Home">Contact Me</a></li>
+                        @if (User.IsInRole("Admin,Writer"))
+                        {
+                        <li class="menu-item-has-children">
+                            <a href="#">Author</a>
+                            <ul class="axil-submenu">
+                                <li>
+                                    <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="Index">
+                                        <span class="">
+                                            <span>Admin</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                    <li>
+                                        <a class="hover-flip-item-wrapper" asp-controller="Home" asp-action="ManagerUserRoles">
+                                            <span class="">
+                                                <span>User Roles</span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    }
+                                <li>
+                                    <a class="hover-flip-item-wrapper" href="~/swagger">
+                                        <span class="">
+                                            <span>APIs</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="Create">
+                                        <span class="">
+                                            <span>Add New Post</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="AuthorArea">
+                                        <span class="hover-flip-item">
+                                            <span data-text="Manage Posts">Manage Posts</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="hover-flip-item-wrapper" asp-controller="Categories" asp-action="Index">
+                                        <span class="hover-flip-item">
+                                            <span data-text="Manage Categories">Manage Categories</span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="hover-flip-item-wrapper" asp-controller="Tags" asp-action="Index">
+                                        <span class="hover-flip-item">
+                                            <span data-text="Manage Tags">Manage Tags</span>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        }
+                </ul>
+            </div>
+        </div>
+        <!-- End Mobile Menu Area -->
+        @RenderBody()
+        <!-- Start Area Area -->
+        @* <partial name="_AreaPartial" /> *@
+        <!-- End Area Area  -->
+        <!-- Start Footer Area  -->
+        <div class="axil-footer-area axil-footer-style-1">
+            <!-- Start Footer Top Area  -->
+            <div class="footer-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <!-- Start Post List  -->
+                            <div class="inner d-flex align-items-center flex-wrap">
+                                <h5 class="follow-title mb--0 mr--20">Follow Me</h5>
+                                <ul class="social-icon color-tertiary md-size justify-content-start">
+                                    <li>
+                                        <a class="text-decoration-none" href="https://www.linkedin.com/in/sbschwartz94/">
+                                            <i class="bi bi-linkedin p-2 socialIcons"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-decoration-none" href="https://github.com/sschwartz7">
+                                            <i class="bi bi-github p-2 socialIcons"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-decoration-none" href="https://mastodon.social/@@sschwartz">
+                                            <i class="bi bi-mastodon p-2 socialIcons"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-decoration-none" href="mailto:sschwartz794@gmail.com">
+                                            <i class="bi bi-envelope-at p-2 socialIcons"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- End Post List  -->
+                        </div>
+                        <div id="my_switcher" class="col-lg-2 d-flex justify-content-around">
+
+                            <a href="javascript: void(0);" data-theme="light" class="setColor light">
+                                <span title="Light Mode">Light</span>
+                            </a>
+
+                            <a href="javascript: void(0);" data-theme="dark" class="setColor dark">
+                                <span title="Dark Mode">Dark</span>
                             </a>
                         </div>
-                        <div class="mobile-close">
-                            <div class="icon">
-                                <i class="fal fa-times"></i>
-                            </div>
-                        </div>
                     </div>
-                    <ul class="mainmenu">
-                        <li>
-                            <a asp-controller="BlogPosts" asp-action="Index">Home</a>
-                        </li>
-                        <li>
-                            <a class="hover-flip-item-wrapper" asp-action="Popular" asp-controller="BlogPosts">Popular Posts</a>
-                        <li><a asp-action="ContactMe" asp-controller="Home">Contact Me</a></li>
-                                                        @if (User.IsInRole("Admin,Writer"))
-                                                        {
-                            <li class="menu-item-has-children">
-                                <a href="#">Author</a>
-                                <ul class="axil-submenu">
-                                    <li>
-                                        <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="Index">
-                                            <span class="">
-                                                <span>Admin</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                                                    @if (User.IsInRole("Admin"))
-                                                                    {
-                                        <li>
-                                            <a class="hover-flip-item-wrapper" asp-controller="Home" asp-action="ManagerUserRoles">
-                                                <span class="">
-                                                    <span>User Roles</span>
-                                                </span>
-                                            </a>
-                                        </li>
-                                                                    }
-                                    <li>
-                                        <a class="hover-flip-item-wrapper" href="~/swagger">
-                                            <span class="">
-                                                <span>APIs</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="Create">
-                                            <span class="">
-                                                <span>Add New Post</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="hover-flip-item-wrapper" asp-controller="BlogPosts" asp-action="AuthorArea">
-                                            <span class="hover-flip-item">
-                                                <span data-text="Manage Posts">Manage Posts</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="hover-flip-item-wrapper" asp-controller="Categories" asp-action="Index">
-                                            <span class="hover-flip-item">
-                                                <span data-text="Manage Categories">Manage Categories</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="hover-flip-item-wrapper" asp-controller="Tags" asp-action="Index">
-                                            <span class="hover-flip-item">
-                                                <span data-text="Manage Tags">Manage Tags</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                                                        }
-                    </ul>
                 </div>
             </div>
-            <!-- End Mobile Menu Area -->
-                                        @RenderBody()
-            <!-- Start Area Area -->
-                                        @* <partial name="_AreaPartial" /> *@
-            <!-- End Area Area  -->
-            <!-- Start Footer Area  -->
-            <div class="axil-footer-area axil-footer-style-1">
-                <!-- Start Footer Top Area  -->
-                <div class="footer-top">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-10">
-                                <!-- Start Post List  -->
-                                <div class="inner d-flex align-items-center flex-wrap">
-                                    <h5 class="follow-title mb--0 mr--20">Follow Me</h5>
-                                    <ul class="social-icon color-tertiary md-size justify-content-start">
-                                        <li>
-                                            <a class="text-decoration-none" href="https://www.linkedin.com/in/sbschwartz94/">
-                                                <i class="bi bi-linkedin p-2 socialIcons"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="text-decoration-none" href="https://github.com/sschwartz7">
-                                                <i class="bi bi-github p-2 socialIcons"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="text-decoration-none" href="https://mastodon.social/@@sschwartz">
-                                                <i class="bi bi-mastodon p-2 socialIcons"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="text-decoration-none" href="mailto:sschwartz794@gmail.com">
-                                                <i class="bi bi-envelope-at p-2 socialIcons"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
+            <!-- End Footer Top Area  -->
+            <!-- Start Copyright Area  -->
+            <div class="copyright-area">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-9 col-md-12 d-flex justify-content-center justify-content-lg-start">
+                            <div class="copyright-left">
+                                <div class="logo">
+                                    <a asp-controller="BlogPosts" asp-action="Index">
+                                        <img class="dark-logo" src="~/assets/images/logo/MSTB-Light.png" alt="Logo Images">
+                                        <img class="light-logo" src="~/assets/images/logo/MSTB-Dark.png" alt="Logo Images">
+                                    </a>
                                 </div>
-                                <!-- End Post List  -->
                             </div>
-                            <div id="my_switcher" class="col-lg-2 d-flex justify-content-around">
-
-                                <a href="javascript: void(0);" data-theme="light" class="setColor light">
-                                    <span title="Light Mode">Light</span>
-                                </a>
-
-                                <a href="javascript: void(0);" data-theme="dark" class="setColor dark">
-                                    <span title="Dark Mode">Dark</span>
-                                </a>
+                        </div>
+                        <div class="col-lg-3 col-md-12">
+                            <div class="copyright-right text-start text-lg-end mt_md--20 mt_sm--20">
+                                <p class="b3">All Rights Reserved © 2023</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- End Footer Top Area  -->
-                <!-- Start Copyright Area  -->
-                <div class="copyright-area">
-                    <div class="container">
-                        <div class="row align-items-center">
-                            <div class="col-lg-9 col-md-12 d-flex justify-content-center justify-content-lg-start">
-                                <div class="copyright-left">
-                                    <div class="logo">
-                                        <a asp-controller="BlogPosts" asp-action="Index">
-                                            <img class="dark-logo" src="~/assets/images/logo/MSTB-Light.png" alt="Logo Images">
-                                            <img class="light-logo" src="~/assets/images/logo/MSTB-Dark.png" alt="Logo Images">
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-12">
-                                <div class="copyright-right text-start text-lg-end mt_md--20 mt_sm--20">
-                                    <p class="b3">All Rights Reserved © 2023</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Copyright Area  -->
             </div>
-            <!-- End Footer Area  -->
-            <!-- Start Back To Top  -->
-            <a id="backto-top"></a>
-            <!-- End Back To Top  -->
-
+            <!-- End Copyright Area  -->
         </div>
+        <!-- End Footer Area  -->
+        <!-- Start Back To Top  -->
+        <a id="backto-top"></a>
+        <!-- End Back To Top  -->
 
-        <!-- JS
-        ============================================ -->
-        <!-- Modernizer JS -->
-        <script src="~/assets/js/vendor/modernizr.min.js"></script>
-        <!-- jQuery JS -->
-        <script src="~/assets/js/vendor/jquery.js"></script>
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-        <script src="~/assets/js/vendor/slick.min.js"></script>
-        <script src="~/assets/js/vendor/tweenmax.min.js"></script>
-        <script src="~/assets/js/vendor/js.cookie.js"></script>
-        <script src="~/assets/js/vendor/jquery.style.switcher.js"></script>
-        <script src="https://kit.fontawesome.com/5f740f3843.js" crossorigin="anonymous"></script>
-        <!-- Main JS -->
-        <script src="~/assets/js/main.js"></script>
-        <script>
-            $(function () {
-                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-            });
-        </script>
+    </div>
+
+    <!-- JS
+    ============================================ -->
+    <!-- Modernizer JS -->
+    <script src="~/assets/js/vendor/modernizr.min.js"></script>
+    <!-- jQuery JS -->
+    <script src="~/assets/js/vendor/jquery.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="~/assets/js/vendor/slick.min.js"></script>
+    <script src="~/assets/js/vendor/tweenmax.min.js"></script>
+    <script src="~/assets/js/vendor/js.cookie.js"></script>
+    <script src="~/assets/js/vendor/jquery.style.switcher.js"></script>
+    <script src="https://kit.fontawesome.com/5f740f3843.js" crossorigin="anonymous"></script>
+    <!-- Main JS -->
+    <script src="~/assets/js/main.js"></script>
+    <script>
+        $(function () {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        });
+    </script>
 
 
 
-                                        @await RenderSectionAsync("Scripts", required: false)
-    </body>
-    </html>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

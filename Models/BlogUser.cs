@@ -20,6 +20,7 @@ namespace Blog.Models
         [NotMapped]
         [Display(Name = "Full Name")]
         public string? FullName { get { return $"{FirstName} {LastName}"; } }
+
         [NotMapped]
         public IFormFile? ImageFormFile { get; set; }
         public byte[]? ImageFileData { get; set; }
